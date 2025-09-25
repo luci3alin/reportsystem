@@ -2,6 +2,7 @@
 #include <amxmisc>
 #include <cstrike>
 #include <fakemeta>
+#include <colorchat>
 
 #define PLUGIN "CS Report System"
 #define VERSION "1.0"
@@ -11,6 +12,9 @@
 new g_WebhookURL[256]
 new g_ServerName[64]
 new g_ServerWebsite[128]
+
+// Player data storage
+new g_ReportedPlayer[33]
 
 public plugin_init() {
     register_plugin(PLUGIN, VERSION, AUTHOR)
@@ -85,7 +89,7 @@ public cmd_report(id) {
 }
 
 public show_report_menu(id) {
-    new menu = menu_create("Raportare Jucător", "report_menu_handler")
+    new menu = menu_create("\wRaportare Jucător", "report_menu_handler")
     
     // Adaugă jucătorii online
     new players[32], num
@@ -123,13 +127,13 @@ public report_menu_handler(id, menu, item) {
     
     new reported_id = str_to_num(data)
     if(!is_user_connected(reported_id)) {
-        client_print(id, print_chat, "[Report] Jucătorul nu mai este conectat!")
+        ColorChat(id, RED, "[TRUST]^1 Jucătorul nu mai este conectat!")
         menu_destroy(menu)
         return PLUGIN_HANDLED
     }
     
     // Salvează ID-ul jucătorului raportat
-    set_user_info(id, "reported_player", data)
+    g_ReportedPlayer[id] = reported_id
     
     // Afișează meniul cu motivele
     show_reason_menu(id)
@@ -139,7 +143,7 @@ public report_menu_handler(id, menu, item) {
 }
 
 public show_reason_menu(id) {
-    new menu = menu_create("Motivul Raportului", "reason_menu_handler")
+    new menu = menu_create("\wMotivul Raportului", "reason_menu_handler")
     
     menu_additem(menu, "AIM HACK", "aim_hack")
     menu_additem(menu, "WALL HACK", "wall_hack")
@@ -163,9 +167,9 @@ public reason_menu_handler(id, menu, item) {
     new data[32], name[32], access, callback
     menu_item_getinfo(menu, item, access, data, charsmax(data), name, charsmax(name), callback)
     
-    new reported_id = str_to_num(get_user_info(id, "reported_player"))
+    new reported_id = g_ReportedPlayer[id]
     if(!is_user_connected(reported_id)) {
-        client_print(id, print_chat, "[Report] Jucătorul nu mai este conectat!")
+        ColorChat(id, RED, "[TRUST]^1 Jucătorul nu mai este conectat!")
         menu_destroy(menu)
         return PLUGIN_HANDLED
     }
@@ -199,17 +203,16 @@ public send_report(reporter_id, reported_id, reason[]) {
     // Obține informații suplimentare
     new additional_info[256]
     formatex(additional_info, charsmax(additional_info), 
-             "Kills: %d | Deaths: %d | Ping: %dms", 
+             "Kills: %d | Deaths: %d", 
              get_user_frags(reported_id), 
-             get_user_deaths(reported_id),
-             get_user_ping(reported_id))
+             get_user_deaths(reported_id))
     
     // Trimite raportul prin HTTP
     send_http_report(reporter_name, reporter_steam_id, reported_name, reported_steam_id, 
                     reason, map_name, additional_info)
     
     // Confirmă jucătorului
-    client_print(reporter_id, print_chat, "[Report] Raportul a fost trimis cu succes!")
+    ColorChat(reporter_id, GREEN, "[TRUST]^1 Raportul a fost trimis cu succes!")
     
     // Log pentru admini
     log_amx("Report: %s (%s) a raportat %s (%s) pentru %s", 
@@ -223,15 +226,7 @@ public send_http_report(const reporter_name[], const reporter_steam_id[],
     // Creează JSON-ul pentru raport
     new json_data[1024]
     formatex(json_data, charsmax(json_data),
-             "{"
-             "\"reporter_name\":\"%s\","
-             "\"reporter_steam_id\":\"%s\","
-             "\"reported_name\":\"%s\","
-             "\"reported_steam_id\":\"%s\","
-             "\"reason\":\"%s\","
-             "\"map_name\":\"%s\","
-             "\"additional_info\":\"%s\""
-             "}",
+             "{reporter_name:%s,reporter_steam_id:%s,reported_name:%s,reported_steam_id:%s,reason:%s,map_name:%s,additional_info:%s}",
              reporter_name, reporter_steam_id, reported_name, reported_steam_id,
              reason, map_name, additional_info)
     
@@ -275,7 +270,7 @@ public cmd_admin_report(id, level, cid) {
     send_http_report(admin_name, admin_steam_id, target_name, target_steam_id, 
                     arg2, map_name, "Raport administrativ")
     
-    client_print(id, print_console, "[Report] Raport administrativ trimis pentru %s", target_name)
+    ColorChat(id, GREEN, "[TRUST]^1 Raport administrativ trimis pentru^4 %s", target_name)
     
     return PLUGIN_HANDLED
 }

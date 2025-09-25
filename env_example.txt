@@ -1,0 +1,17 @@
+# Configurare Bot Discord pentru CS Report System
+# Copiază acest fișier ca .env și completează valorile
+
+# Token-ul bot-ului Discord (obține de la Discord Developer Portal)
+DISCORD_BOT_TOKEN=your_bot_token_here
+
+# ID-ul canalului pentru rapoarte (obține din Discord)
+REPORT_CHANNEL_ID=your_channel_id_here
+
+# Numele serverului
+SERVER_NAME=TRUST.CSPOWER.RO
+
+# Website-ul serverului
+SERVER_WEBSITE=cspower.ro
+
+# URL-ul webhook-ului Discord (opțional, pentru Vercel)
+DISCORD_WEBHOOK_URL=your_webhook_url_here
