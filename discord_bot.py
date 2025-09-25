@@ -12,7 +12,7 @@ intents.message_content = True
 bot = commands.Bot(command_prefix='!', intents=intents)
 
 # Configurare din variabilele de mediu
-BOT_TOKEN = os.environ.get('DISCORD_BOT_TOKEN', 'MTQyMDkwODg4OTkyNjUzMzIwMQ.GyBhKq.JY_wl_GrkZfGQRD9aEGCNjUyzFHBdOfSGKdaVM')
+BOT_TOKEN = os.environ.get('DISCORD_BOT_TOKEN')
 REPORT_CHANNEL_ID = os.environ.get('REPORT_CHANNEL_ID', '1420904323956609056')
 SERVER_NAME = os.environ.get('SERVER_NAME', 'TRUST.CSPOWER.RO')
 SERVER_WEBSITE = os.environ.get('SERVER_WEBSITE', 'cspower.ro')
