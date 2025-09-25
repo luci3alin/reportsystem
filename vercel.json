@@ -11,8 +11,5 @@
       "src": "/api/(.*)",
       "dest": "/api/$1"
     }
-  ],
-  "env": {
-    "DISCORD_WEBHOOK_URL": "@discord_webhook_url"
-  }
+  ]
 }
