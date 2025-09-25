@@ -1,0 +1,10 @@
+{
+    "bot_token": "YOUR_BOT_TOKEN_HERE",
+    "report_channel_id": null,
+    "admin_role_id": null,
+    "server_name": "CS 1.6 Server",
+    "server_website": "your-server.com",
+    "discord_webhook_url": "YOUR_DISCORD_WEBHOOK_URL_HERE",
+    "webhook_server_port": 5000,
+    "enable_auto_reports": true
+}
